@@ -81,7 +81,22 @@ function mainMenu(person, people) {
             alert(personDescendants);
             break;
         case "test":
-
+            // let spouse = findSpouse(person[0], people)
+            // console.log(spouse)
+            // let parents = findParents(person[0], people)
+            // console.log(parents)
+            // let arrayOfGender = findByGender(people)
+            // console.log(arrayOfGender)
+            // let arrayOfOccupations = findByOccupation(people)
+            // console.log(arrayOfOccupations)
+            // let arrayOfEyeColors = searchByEyeColor(people)
+            // console.log(arrayOfEyeColors)
+            let arrayOfHeight = findByHeight(people)
+            console.log(arrayOfHeight)
+            let arrayOfWeight = findByWeight(people)
+            console.log(arrayOfWeight)
+            // let arrayOfDOB = searchByDOB(people)
+            // console.log(arrayOfDOB)
             break;
         case "restart":
             // Restart app() from the very beginning
@@ -220,3 +235,69 @@ function findParents(person, people) {
     return results
 }
 
+function findByGender(people) { //Garrett
+    let personsGender = promptFor("What is the person's gender?", chars);
+
+    let arrayOfFoundGender = people.filter(function (person) {
+        if (person.gender === personsGender) {
+            return true;
+        }
+    })
+    return arrayOfFoundGender;
+}
+
+function findByOccupation(people) { //Garrett
+    let personsOccupation = promptFor("What is the person's occupation?", chars);
+
+    let arrayOfFoundOccupations = people.filter(function (person) {
+        if (person.occupation === personsOccupation) {
+            return true;
+        }
+    })
+    return arrayOfFoundOccupations;
+}
+
+function searchByEyeColor(people) { //Zach
+    let personsEyeColor = promptFor("What is the person's eye color?", chars);
+
+    let arrayOfFoundEyeColors = people.filter(function(potentialMatch) {
+        if (potentialMatch.eyeColor === personsEyeColor) {
+            return true;
+        }
+    })
+    return arrayOfFoundEyeColors;
+}
+
+function searchByDOB(people) { //Zach
+    let personsDob = promptFor("What is the person's date of birth? (MM/DD/YYYY)", chars);
+    
+    let foundPerson = people.filter(function (potentialMatch) {
+      if (potentialMatch.dob === personsDob) {
+        return true;
+      }
+    })
+    return  foundPerson;
+}
+
+
+function findByWeight(people) { //Tosin
+    let personsWeight = parseInt(promptFor("What is the person's weight?", chars));
+
+    let arrayOfFoundWeight = people.filter(function (person) {
+        if (person.weight === personsWeight){
+            return true;
+        }
+    })
+    return arrayOfFoundWeight;
+}
+
+function findByHeight(people) { //Tosin
+    let personsHeight = parseInt(promptFor("What is the person's height?", chars));
+    
+    let arrayOfFoundHeight = people.filter(function (person) {
+        if (person.height === personsHeight){
+            return true;
+        }
+    })
+    return arrayOfFoundHeight;
+}
