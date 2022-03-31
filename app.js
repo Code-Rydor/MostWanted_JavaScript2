@@ -58,7 +58,7 @@ function mainMenu(person, people) {
         return app(people);
     }
     let displayOption = prompt(
-        `Found ${person[0].firstName} ${person[0].lastName}. Do you want to know their 'info', 'family', or 'descendants'?\nType the option you want or type 'restart' or 'quit'.`
+        `Found ${person[0].firstName} ${person[0].lastName}. Do you want to know their 'info', 'family', 'test', or 'descendants'?\nType the option you want or type 'restart' or 'quit'.`
     );
     // Routes our application based on the user's input
     switch (displayOption) {
@@ -79,6 +79,9 @@ function mainMenu(person, people) {
             // HINT: Review recursion lecture + demo for bonus user story
             let personDescendants = findPersonDescendants(person[0], people);
             alert(personDescendants);
+            break;
+        case "test":
+
             break;
         case "restart":
             // Restart app() from the very beginning
@@ -139,7 +142,12 @@ function displayPeople(people) {
 function displayPerson(person) {
     let personInfo = `First Name: ${person.firstName}\n`;
     personInfo += `Last Name: ${person.lastName}\n`;
-    //! TODO: finish getting the rest of the information to display //////////////////////////////////////////
+    personInfo += `Gender: ${person.gender}\n`;
+    personInfo += `DOB: ${person.dob}\n`;
+    personInfo += `Height: ${person.height}\n`;
+    personInfo += `Weight: ${person.weight}\n`;
+    personInfo += `Eye Color: ${person.eyeColor}\n`;
+    personInfo += `Occupation: ${person.occupation}\n`;
     alert(personInfo);
 }
 // End of displayPerson()
@@ -183,3 +191,31 @@ function chars(input) {
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
+
+function findSpouse(person, people){
+    let filteredSpouse = people.filter(function (potentialSpouse) {
+        if (potentialSpouse.id === person.currentSpouse) {
+            return true;
+        }
+    })
+    return filteredSpouse;
+}
+
+function findById(idNumber, people) {
+    let filteredPerson = people.filter(function (potentialPerson) {
+        if (potentialPerson.id === idNumber) {
+            return true;
+        }
+    })
+    return filteredPerson;
+}
+
+function findParents(person, people) {  
+    let results = people.filter(function(fm){
+        if(person.parents.includes(fm.id)) {
+            return true
+        } 
+        
+    }) 
+    return results
+}
