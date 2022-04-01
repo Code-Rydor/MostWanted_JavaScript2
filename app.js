@@ -16,31 +16,24 @@
  * @param {Array} people        A collection of person objects.
  */
 function app(people) {
-    // promptFor() is a custom function defined below that helps us prompt and validate input more easily
-    // Note that we are chaining the .toLowerCase() immediately after the promptFor returns its value
     let searchType = promptFor(
         "Do you know the name of the person you are looking for? Enter 'yes' or 'no'",
         yesNo
     ).toLowerCase();
     let searchResults;
-    // Routes our application based on the user's input
     switch (searchType) {
         case "yes":
             searchResults = searchByName(people);
             break;
         case "no":
-            //! TODO: Declare a searchByTrait function //////////////////////////////////////////
-            searchResults = searchByTrait(people);
+            searchResults = findByMultipleTraits(people);
             break;
         default:
-            // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
             app(people);
             break;
     }
-    // Calls the mainMenu() only AFTER we find the SINGLE PERSON
     mainMenu(searchResults, people);
 }
-// End of app()
 
 /**
  * After finding a single person, we pass in the entire person-object that we found,
@@ -51,28 +44,75 @@ function app(people) {
  * @returns {String}            The valid string input retrieved from the user.
  */
 function mainMenu(person, people) {
-    // A check to verify a person was found via searchByName() or searchByTrait()
     if (!person[0]) {
         alert("Could not find that individual.");
-        // Restarts app() from the very beginning
         return app(people);
     }
     let displayOption = prompt(
         `Found ${person[0].firstName} ${person[0].lastName}. Do you want to know their 'info', 'family', 'test', or 'descendants'?\nType the option you want or type 'restart' or 'quit'.`
     );
-    // Routes our application based on the user's input
+
     switch (displayOption) {
         case "info":
-            //! TODO: Declare a findPersonInfo function //////////////////////////////////////////
-            // HINT: Look for a person-object stringifier utility function to help
-            let personInfo = findPersonInfo(person[0]);
+            let personInfo = displayPerson(person[0]);
             alert(personInfo);
             break;
         case "family":
-            //! TODO: Declare a findPersonFamily function //////////////////////////////////////////
-            // HINT: Look for a people-collection stringifier utility function to help
-            let personFamily = findPersonFamily(person[0], people);
-            alert(personFamily);
+            // //! TODO: Declare a findPersonFamily function //////////////////////////////////////////
+            // // HINT: Look for a people-collection stringifier utility function to help
+            // let personFamily = findPersonFamily(person[0], people);
+
+            // displayPeople(personFamily);
+            function findFamily(person, people, parentsArray = []) {
+                let family = people.filter(function (personObject) {
+                    let parentsArray = personObject.parents;
+                    for (let index = 0; index < parentsArray.length; index++) {
+                        if (personObject.id === person.parents[0] || personObject.id === person.parents[1])
+                            return true;
+                    }
+                    if (personObject.id === person.currentSpouse) {
+                        return true;
+                    }
+
+                    for (let index = 0; index < parentsArray.length; index++) {
+                        if (personObject.parents[index] === person.parents[0] || personObject.parents[index] === person.parents[1]) {
+                            return true;
+                        }
+                    }
+                    for (let index = 0; index < parentsArray.length; index++) {
+                        if (personObject.parents[index] === person.id)
+                            return true;
+                        }
+                })
+                return family;
+            }
+
+            let foundFamily = findFamily(person[0], people)
+            displayPeople(foundFamily)
+            // function recursiveFindFamily(person, people, subArray= []){
+            //     let recurseFamily = people.filter(function(el){
+            //         let subArray = el.parents;
+            //         for (let i = 0; i < person.parents.length; i++){    
+            //             if (el.id === person.parents[i])
+            //             return true;
+
+            //         }
+            //         if (el.id === person.currentSpouse){
+            //             return true;
+            //         }
+                
+            //         for (let i = 0; i < subArray.length; i++){
+            //             if (el.parents[i] === person.parents[0] || el.parents[i]===person.parents[1]){
+            //                 return true;
+            //             }       
+            //         }
+            //         for (let i = 0; i < subArray.length; i++){
+            //             if (el.parents[i] === person.id)
+            //             return true;
+            //         }    
+            //     })
+            //     return recurseFamily;
+            // }
             break;
         case "descendants":
             //! TODO: Declare a findPersonDescendants function //////////////////////////////////////////
@@ -81,22 +121,9 @@ function mainMenu(person, people) {
             alert(personDescendants);
             break;
         case "test":
-            // let spouse = findSpouse(person[0], people)
-            // console.log(spouse)
-            // let parents = findParents(person[0], people)
-            // console.log(parents)
-            // let arrayOfGender = findByGender(people)
-            // console.log(arrayOfGender)
-            // let arrayOfOccupations = findByOccupation(people)
-            // console.log(arrayOfOccupations)
-            // let arrayOfEyeColors = searchByEyeColor(people)
-            // console.log(arrayOfEyeColors)
-            let arrayOfHeight = findByHeight(people)
-            console.log(arrayOfHeight)
-            let arrayOfWeight = findByWeight(people)
-            console.log(arrayOfWeight)
-            // let arrayOfDOB = searchByDOB(people)
-            // console.log(arrayOfDOB)
+            let spouse = findSpouse(person[0], people)
+            console.log(spouse)
+            let parents = findParents(person[0], people)
             break;
         case "restart":
             // Restart app() from the very beginning
@@ -206,7 +233,17 @@ function chars(input) {
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
-
+function findPersonFamily(person, people) {
+    let family = []
+    {
+        let spouse = findSpouse(person, people)
+        family.push(spouse)
+    } {
+        let parents = findParents(person, people)
+        family.push(parents)
+    }
+    return family
+}
 function findSpouse(person, people){
     let filteredSpouse = people.filter(function (potentialSpouse) {
         if (potentialSpouse.id === person.currentSpouse) {
@@ -235,7 +272,7 @@ function findParents(person, people) {
     return results
 }
 
-function findByGender(people) { //Garrett
+function findByGender(people) { 
     let personsGender = promptFor("What is the person's gender?", chars);
 
     let arrayOfFoundGender = people.filter(function (person) {
@@ -246,7 +283,7 @@ function findByGender(people) { //Garrett
     return arrayOfFoundGender;
 }
 
-function findByOccupation(people) { //Garrett
+function findByOccupation(people) { 
     let personsOccupation = promptFor("What is the person's occupation?", chars);
 
     let arrayOfFoundOccupations = people.filter(function (person) {
@@ -257,7 +294,7 @@ function findByOccupation(people) { //Garrett
     return arrayOfFoundOccupations;
 }
 
-function searchByEyeColor(people) { //Zach
+function searchByEyeColor(people) { 
     let personsEyeColor = promptFor("What is the person's eye color?", chars);
 
     let arrayOfFoundEyeColors = people.filter(function(potentialMatch) {
@@ -268,8 +305,8 @@ function searchByEyeColor(people) { //Zach
     return arrayOfFoundEyeColors;
 }
 
-function searchByDOB(people) { //Zach
-    let personsDob = promptFor("What is the person's date of birth? (MM/DD/YYYY)", chars);
+function searchByDOB(people) { 
+    let personsDob = promptFor("What is the person's date of birth? (M/D/YYYY)", chars);
     
     let foundPerson = people.filter(function (potentialMatch) {
       if (potentialMatch.dob === personsDob) {
@@ -279,8 +316,7 @@ function searchByDOB(people) { //Zach
     return  foundPerson;
 }
 
-
-function findByWeight(people) { //Tosin
+function findByWeight(people) { 
     let personsWeight = parseInt(promptFor("What is the person's weight?", chars));
 
     let arrayOfFoundWeight = people.filter(function (person) {
@@ -291,7 +327,7 @@ function findByWeight(people) { //Tosin
     return arrayOfFoundWeight;
 }
 
-function findByHeight(people) { //Tosin
+function findByHeight(people) { 
     let personsHeight = parseInt(promptFor("What is the person's height?", chars));
     
     let arrayOfFoundHeight = people.filter(function (person) {
@@ -301,3 +337,68 @@ function findByHeight(people) { //Tosin
     })
     return arrayOfFoundHeight;
 }
+
+function findByMultipleTraits(people) {
+    let genderInput = promptFor("What gender would you like to search for? Press 's' to skip", chars);
+    let heightInput = promptFor("What height would you like to search for? Press 's' to skip", chars);
+    let intHeight = parseInt(heightInput)
+    let weightInput = promptFor("What weight would you like to search for? Press 's' to skip", chars);
+    let intWeight = parseInt(weightInput)
+    let eyeColorInput = promptFor("What eye color would you like to search for? Press 's' to skip", chars);
+    let occupationInput = promptFor("What occupation would you like to search for? Press 's' to skip", chars);
+    let filteredSearch = people.filter(function(person){
+      
+        if (genderInput === person.gender || genderInput === "s"){
+            return true;
+        }
+    }
+    ).filter(function(person){
+      
+        if (intHeight === person.height || heightInput === "s"){
+            return true;
+        }
+    }
+    ).filter(function(person){
+        if (intWeight === person.weight || weightInput === "s"){
+            return true;    
+        }
+    }
+    ).filter(function(person){
+        if (eyeColorInput === person.eyeColor || eyeColorInput === "s"){
+            return true;
+        }
+    }
+    ).filter(function(person){
+        if (occupationInput === person.occupation || occupationInput === "s"){
+            return true;
+        }
+    }
+    )
+
+    return filteredSearch;
+    }
+
+
+
+
+
+
+// siblings = people.map(findSiblings)
+
+// function findSiblings(personObject) {
+//     resultsArrayOfSiblingIds = [];
+//     if (chosenPerson.parent[0] === personObject.parents[0] || chosenPerson.parent[0] === personObject.parents[1]);
+//      {
+//         let siblingObject = {
+//             id: personObject.id,
+//             firstname: personObject.firstName,
+//             lastname: personObject.lastName
+//         }
+//         resultsArrayOfSiblingIds.push(personObject.id)
+//     }
+//     if (chosenPerson.parent[1] === personObject.parents[0] || chosenPerson.parent[1] === personObject.parents[1]);
+//     {
+//         resultsArrayOfSiblingIds.push(personObject.id)
+//     }
+//     return resultsArrayOfSiblingIds
+// }
